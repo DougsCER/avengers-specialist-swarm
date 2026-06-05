@@ -1,0 +1,4 @@
+.env
+.specialist_ids.json
+__pycache__/
+*.pyc
