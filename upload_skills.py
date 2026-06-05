@@ -1,8 +1,7 @@
 """
-Upload each skill in skills/ via the Skills API and attach to the right
-specialist agent.
+Upload each Avengers hero skill and attach to the right specialist agent.
 
-Uses `files_from_dir` (from anthropic.lib) to package the skill directory.
+Uses `files_from_dir` to package the skill directory.
 Each skill bundle must contain a SKILL.md at its root with proper YAML
 frontmatter (`name` and `description`).
 
@@ -14,15 +13,18 @@ import json
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
 from anthropic import Anthropic
 from anthropic.lib import files_from_dir
 
+load_dotenv()
 
 # Map skill directory name → specialist key that should get it
 SKILL_TO_SPECIALIST = {
-    "pricing-playbook": "pricing",
-    "legal-checklist":  "legal",
-    "competitive-intel": "competitive",
+    "stark-engineering": "iron_man",
+    "cap-strategy":      "captain_america",
+    "widow-intel":       "black_widow",
+    "banner-research":   "hulk",
 }
 
 
@@ -37,9 +39,8 @@ def main() -> None:
 
     client = Anthropic()
 
-    # List existing custom skills so we can detect and reuse any prior uploads.
-    # Skills API enforces unique display_title, so retrying with the same title
-    # would otherwise fail. Idempotent retry is essential for hackathon dev loops.
+    # List existing custom skills — Skills API enforces unique display_title,
+    # so detect and reuse prior uploads to support re-runs during the hackathon.
     print("Checking for existing skills...")
     existing_by_title: dict[str, str] = {}
     for page in client.beta.skills.list(source="custom"):
@@ -55,7 +56,7 @@ def main() -> None:
 
         display_title = skill_name.replace("-", " ").title()
 
-        # 1. Upload the skill (or reuse if one already exists with this title)
+        # 1. Upload (or reuse)
         if display_title in existing_by_title:
             skill_id = existing_by_title[display_title]
             print(f"Reusing existing skill: {skill_name} ({skill_id})")
@@ -69,13 +70,12 @@ def main() -> None:
             uploaded[skill_name] = skill.id
             print(f"  -> {skill.id}")
 
-        # 2. Attach to the matching specialist by updating its skills array
+        # 2. Attach to the matching hero
         specialist_id = specialist_ids[specialist_key]
         skill_id = uploaded[skill_name]
-        print(f"  attaching to specialist `{specialist_key}` ({specialist_id})...")
+        print(f"  attaching to {specialist_key} ({specialist_id})...")
 
         current = client.beta.agents.retrieve(specialist_id)
-        # Avoid duplicate attachment on re-run
         already_attached = any(
             s.get("skill_id") == skill_id for s in (current.skills or [])
         )
@@ -94,8 +94,8 @@ def main() -> None:
         print(f"  attached ✓")
 
     Path(".skill_ids.json").write_text(json.dumps(uploaded, indent=2))
-    print(f"\nUploaded {len(uploaded)} skills and attached them to specialists.")
-    print("Next: python run_deal_desk.py")
+    print(f"\nUploaded {len(uploaded)} skills and attached them to heroes.")
+    print("Next: python run_mission.py")
 
 
 if __name__ == "__main__":
