@@ -19,6 +19,8 @@ from dotenv import load_dotenv
 from anthropic import Anthropic
 
 load_dotenv()
+for _var in ("ANTHROPIC_BASE_URL", "ANTHROPIC_AUTH_TOKEN", "AZURE_OPENAI_ENDPOINT"):
+    os.environ.pop(_var, None)
 
 COORDINATOR_SYSTEM = """\
 You are Nick Fury — Director of S.H.I.E.L.D. and coordinator of the Avengers.

@@ -18,6 +18,8 @@ from anthropic import Anthropic
 from anthropic.lib import files_from_dir
 
 load_dotenv()
+for _var in ("ANTHROPIC_BASE_URL", "ANTHROPIC_AUTH_TOKEN", "AZURE_OPENAI_ENDPOINT"):
+    os.environ.pop(_var, None)
 
 # Map skill directory name → specialist key that should get it
 SKILL_TO_SPECIALIST = {

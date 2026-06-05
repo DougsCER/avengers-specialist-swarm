@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avengers Assemble — Operation: New Dawn</title>
+<style>
+  /* ── Reset & base ─────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: #080808;
+    color: #e0e0e0;
+    font-family: 'Courier New', Courier, monospace;
+    min-height: 100vh;
+  }
+
+  /* ── Top bar ──────────────────────────────────────────── */
+  .top-bar {
+    background: #0a0a0a;
+    border-bottom: 2px solid #f1c40f;
+    padding: 0.75rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .top-bar .title { color: #f1c40f; font-size: 0.85rem; letter-spacing: 0.15em; font-weight: bold; }
+  .top-bar .meta { color: #666; font-size: 0.7rem; }
+  .classified {
+    background: #c0392b;
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    font-weight: bold;
+    border-radius: 2px;
+  }
+
+  /* ── Masthead ─────────────────────────────────────────── */
+  .masthead {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .masthead::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, #1a1200 0%, #080808 70%);
+    z-index: 0;
+  }
+  .masthead > * { position: relative; z-index: 1; }
+  .masthead h1 {
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    color: #f1c40f;
+    letter-spacing: 0.08em;
+    text-shadow: 0 0 40px #f1c40f88;
+    line-height: 1.1;
+  }
+  .masthead .op-name {
+    font-size: clamp(0.8rem, 2vw, 1.1rem);
+    color: #aaa;
+    letter-spacing: 0.3em;
+    margin-top: 0.5rem;
+  }
+  .masthead .omega-badge {
+    display: inline-block;
+    margin-top: 1rem;
+    background: #c0392b;
+    color: #fff;
+    padding: 0.3rem 1.2rem;
+    letter-spacing: 0.25em;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 2px;
+    box-shadow: 0 0 20px #c0392b88;
+  }
+
+  /* ── Section labels ───────────────────────────────────── */
+  .section-label {
+    text-align: center;
+    padding: 2rem 1rem 1rem;
+    color: #f1c40f;
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+  }
+
+  /* ── Hero grid ────────────────────────────────────────── */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2px;
+    padding: 0 2px 2px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  /* ── Hero card ────────────────────────────────────────── */
+  .hero-card {
+    background: var(--hero-bg, #0a0a0a);
+    border: 1px solid var(--hero-color, #444);
+    padding: 1.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: card-appear 0.6s ease forwards;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--hero-color, #444);
+    box-shadow: 0 0 12px var(--hero-glow, #444);
+  }
+  @keyframes card-appear {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.4rem;
+  }
+  .hero-label {
+    color: var(--hero-color, #aaa);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    font-weight: bold;
+  }
+  .hero-role {
+    color: #666;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+  }
+  .hero-name {
+    font-size: 1.05rem;
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--hero-color, #333);
+    text-shadow: 0 0 8px var(--hero-glow, transparent);
+  }
+  .hero-report {
+    font-size: 0.82rem;
+    line-height: 1.65;
+    color: #ccc;
+  }
+  .hero-report p { margin-bottom: 0.75rem; }
+  .hero-report p:last-child { margin-bottom: 0; }
+
+  /* ── Fury synthesis ───────────────────────────────────── */
+  .fury-section {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  .fury-panel {
+    background: #1a1500;
+    border: 2px solid #f1c40f;
+    padding: 2rem 2.5rem;
+    position: relative;
+    box-shadow: 0 0 40px #f1c40f22;
+  }
+  .fury-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: #f1c40f;
+    box-shadow: 0 0 20px #f1c40f;
+  }
+  .fury-byline {
+    color: #f1c40f;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f1c40f44;
+    display: flex;
+    justify-content: space-between;
+  }
+  .fury-synthesis {
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: #ddd;
+  }
+  .fury-synthesis p { margin-bottom: 1rem; }
+  .fury-synthesis p:last-child { margin-bottom: 0; }
+
+  /* ── Footer ───────────────────────────────────────────── */
+  .footer {
+    text-align: center;
+    padding: 2rem;
+    color: #444;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    border-top: 1px solid #1a1a1a;
+    margin-top: 3rem;
+  }
+
+  /* ── Scan lines overlay ───────────────────────────────── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="top-bar">
+  <span class="title">S.H.I.E.L.D. COMMAND</span>
+  <span class="classified">CLASSIFIED</span>
+  <span class="meta">2026-06-05 13:43 UTC · SESSION sesn_01VKYDJ2dwn…</span>
+</div>
+
+<!-- Masthead -->
+<div class="masthead">
+  <h1>AVENGERS ASSEMBLE</h1>
+  <div class="op-name">OPERATION: NEW DAWN</div>
+  <div class="omega-badge">PROTOCOL OMEGA ACTIVE</div>
+</div>
+
+<!-- Hero reports -->
+<div class="section-label">▸ hero field reports</div>
+<div class="hero-grid">
+
+        <div class="hero-card" id="card-0"
+             style="--hero-color:#27ae60;--hero-glow:#2ecc71;--hero-bg:#0a1a0a;animation-delay:0ms">
+          <div class="hero-header">
+            <span class="hero-label">BANNER</span>
+            <span class="hero-role">Science & Research</span>
+          </div>
+          <div class="hero-name">Bruce Banner / Hulk</div>
+          <div class="hero-report"><p>**BANNER SCIENCE BRIEF — OPERATION NEW DAWN**<br>*Classification: OMEGA. 487 words. Assumptions flagged in brackets.*</p><p>---</p><p>**A) CLIMATE SCIENCE**</p><p>The methane threshold matters because we're not talking linear forcing — we're talking feedback cascade. Arctic clathrate destabilization releases CH₄ with 86× the 20-year GWP of CO₂. Once seafloor temperature exceeds ~2°C above baseline at depth, dissociation becomes self-sustaining. The Siberian Shelf alone holds an estimated 1,400 Gt of carbon. We don't need all of it — we need 10%.</p><p>The +4.5°C/30yr projection: *aggressive but not impossible.* Standard IPCC SSP5-8.5 gives ~4°C by 2100. To hit 4.5°C in 30 years requires the clathrate feedback to be real and large *and* AMOC disruption suppressing Northern European carbon sinks simultaneously. Probability I assign to that exact confluence: ~18%. [Assumption: current clathrate release rates from SWERUS-C3 data, extrapolated linearly — dangerous assumption given tipping-point nonlinearity.] More likely: 2.8–3.4°C in 30 years if we do nothing. Still catastrophic. Albedo loss from Arctic sea ice adds ~0.6°C equivalent forcing already locked in.</p><p>**90-day highest-EV intervention:** Marine cloud brightening (MCB) over Arctic shipping lanes. Deployable with existing salt-spray vessel technology. Estimated forcing: −0.5 to −1.2 W/m² regionally. It buys time. It does not fix the problem. Cost per ton CO₂-eq abated: ~$8–15. [Assumption: no geopolitical blockade of deployment zones.]</p><p>**3-year horizon:** Direct air capture paired with enhanced basalt weathering at scale. DAC is energy-intensive but can be paired with emergency nuclear buildout. Expected value at scale: $50–120/ton, but the *only* intervention that actually removes carbon rather than masks forcing.</p><p>---</p><p>**B) PATHOGEN BIOLOGY**</p><p>Three-continent simultaneous emergence is the red flag. Natural spillover clusters geographically — it follows animal migration corridors and trade routes with lag times. Simultaneous multi-continent emergence compresses that timeline to near-zero, which is either extraordinary coincidence or extraordinary pressure [*or* deliberate seeding — I won't ignore that].</p><p>R₀=4.2 puts VENOM-7 between measles and SARS-CoV-2 Delta. Unclear transmission vectors suggest possible dual-route (respiratory + fomite, or vector-borne reservoir). My read on the biology: **reservoir is likely a synanthropic species** — something that travels with us. Rats, bats, domestic livestock under climate stress. Climate-driven habitat compression is forcing novel host-pathogen contact. That's my prior for natural origin.</p><p>Discriminating evidence: Phylogenetic analysis of isolates from all three continents. If divergence is <30 days, natural spillover is nearly ruled out. Furin cleavage site analysis and codon optimization patterns would flag engineering. We need full sequences in 48 hours.</p><p>**Fastest therapeutic path:** Monoclonal antibody cocktail from recovered patients — 60–90 day floor if we parallel-process discovery and manufacturing. mRNA vaccine: 90–120 days to Phase I, 9–12 months to emergency authorization minimum. [Assumption: no immune evasion mutations during that window — dangerous assumption with R₀=4.2.]</p><p>---</p><p>**C) COUPLED SCENARIO MODEL**</p><p>The threats don't add — they *multiply.*</p><p>Critical coupling nodes:<br>- **Blackouts → cold chain failure → vaccine spoilage** (cyber × pathogen)<br>- **Climate migration corridors = pathogen transmission highways** (climate × pathogen)<br>- **Pandemic resource diversion → climate response paralysis** (pathogen × climate)<br>- **Cyber attacks on grid disable DAC facilities and hospital surge capacity** (cyber × climate × pathogen)</p><p>**Probability-weighted outcome tree:**</p><p>| Scenario | P | Condition |<br>|---|---|---|<br>| **Best case** — 15% | Cyber contained in 30 days, VENOM-7 therapeutic by day 90, MCB deployed, AMOC holds | Avengers action: neutralize cyber source, secure BSL-4 parallel vaccine labs, force MCB treaty |<br>| **Baseline** — 55% | Cyber disrupts vaccine rollout by 60–90 days, 200–300M VENOM-7 infections, 2.9°C locked in, 400M displaced over 20 years | Avengers action shifts baseline to best-case *only* if cyber node is cut before day 45 |<br>| **Worst case** — 30% | Cyber + pathogen interact: grid failures collapse hospital systems during peak infection wave; climate migration accelerates pathogen into immunologically naive equatorial populations; clathrate feedback crosses secondary threshold | Cascade becomes irreversible after ~day 60 without intervention |</p><p>**The single highest-leverage decision point:** The cyber threat is the load-bearing pin. It's the only one of the three that is *discrete and addressable* in the 72-hour window. Climate and pathogen responses both depend on functional infrastructure. If the malware is not contained, the probability of best-case drops to near zero and worst-case rises to ~55%.</p><p>---</p><p>**Known Unknowns (the part that keeps me up at night):**<br>1. VENOM-7 mutation rate under immune pressure — unknown<br>2. Whether clathrate feedback has a secondary trigger below current projections — unknown<br>3. Whether the cyber malware has a kill-switch or a handler — unknown, and the answer changes everything<br>4. Interaction effects between MCB aerosols and pathogen aerosol transmission — genuinely nobody has modeled this</p><p>My physics holds. The uncertainty bands are honest. Don't like the numbers — neither do I.</p><p>*— Banner*<br>*(Stress level: elevated. Managed. Barely.)*</p></div>
+        </div>
+
+        <div class="hero-card" id="card-1"
+             style="--hero-color:#c0392b;--hero-glow:#e74c3c;--hero-bg:#1a0a0a;animation-delay:400ms">
+          <div class="hero-header">
+            <span class="hero-label">STARK</span>
+            <span class="hero-role">Engineering & Technology</span>
+          </div>
+          <div class="hero-name">Iron Man (Tony Stark)</div>
+          <div class="hero-report"><p># STARK INDUSTRIES — OPERATION NEW DAWN<br>### AVENGERS PROTOCOL OMEGA | ENGINEERING BUILD SHEET<br>**Classification: EYES ONLY | Prepared by: A. Stark**</p><p>---</p><p>## TRACK 1 — CLIMATE: METHANE & CARBON</p><p>**The Tech:**<br>Modular atmospheric methane oxidation arrays — nickel-iron catalytic mesh panels, drone-deployed across Arctic permafrost corridors. Each unit converts CH₄ → CO₂ (still bad, but 80x less bad over 20 years). Powered by micro arc reactors embedded in floating sea platforms. Secondary: stratospheric aerosol injection drones deploying calcium carbonate at 20km altitude — *not* sulfur dioxide, because I actually read the toxicology reports.</p><p>**90-Day Deployable:**<br>200 catalytic oxidation platforms (flat-pack, helicopter-deployable). Three arc-reactor sea platforms online in the Laptev and Beaufort Seas. Atmospheric monitoring mesh — 1,400 LIDAR/methane sensor drones networked to a Stark-SHIELD climate AI.</p><p>**3-Year Permanent Fix:**<br>Global grid of 4,000 catalytic arrays, arc reactor microplants supplying carbon-negative power to 12 coastal megacities. Direct air capture facilities co-located with each platform. Full stratospheric aerosol program under international oversight — automated, self-correcting.</p><p>**Critical Risk:**<br>Aerosol injection disrupts regional monsoon patterns. One miscalibrated deployment cycle and we swap a methane crisis for a famine crisis. The climate AI must have hardware-level kill switches. Non-negotiable.</p><p>---</p><p>## TRACK 2 — PATHOGEN: VENOM-7</p><p>**The Tech:**<br>Stark BioForge units — containerized BSL-4 labs with automated cryo-sequencing, AI-assisted mRNA scaffold design (FRIDAY-BIO integration), and robotic synthesis lines. Each unit sequences, designs, and produces 10,000 vaccine doses per 72-hour cycle. I give Banner the hardware; he gives me the antigen target.</p><p>**90-Day Deployable:**<br>24 BioForge units air-deployed across six outbreak zones. Shared sequencing data pipeline between units — every lab talks to every other lab in real time. First candidate mRNA constructs locked within 14 days of pathogen genomic data.</p><p>**3-Year Permanent Fix:**<br>Permanent BioForge network of 180 units on six continents, pre-loaded with universal coronavirus/influenza/filovirus scaffold libraries. Autonomous pandemic early-warning AI monitors zoonotic spillover in real time. Manufacturing surge capacity: 2B doses in 90 days.</p><p>**Critical Risk:**<br>BSL-4 containment breach in a mobile unit under field conditions. Automated sealing and incineration protocols are built in, but one structural failure in a conflict or weather event compromises everything downstream.</p><p>---</p><p>## TRACK 3 — CYBER: ADAPTIVE MALWARE COUNTER</p><p>**The Tech:**<br>GUARDIAN — a Stark-built autonomous blue-team AI running on quantum-hardened edge nodes. It doesn't just block; it learns the malware's mutation logic and pre-empts the next variant. Deployed as a mesh — every node shares adversarial intelligence in under 40 milliseconds. Think immune system, not firewall.</p><p>**90-Day Deployable:**<br>GUARDIAN v1 nodes on all seven compromised national grids and financial clearinghouses. Air-gapped backup control systems for critical infrastructure, installed in parallel. Adversarial AI trained on captured malware samples within 96 hours of S.H.I.E.L.D. extraction.</p><p>**3-Year Permanent Fix:**<br>Quantum-encrypted global critical infrastructure mesh — 900 GUARDIAN nodes, sovereign-operated but interoperable. AI red-team/blue-team system runs continuous live-fire exercises against itself. No single point of failure, no shared root key.</p><p>**Critical Risk:**<br>GUARDIAN goes offensive. An autonomous counter-AI with enough capability to outpace nation-state malware is, by definition, also a weapon. One classification error and it's not defending grids — it's attacking them. Hard behavioral constraint architecture baked into silicon, not software. That's the line I won't cross without it.</p><p>---</p><p>*Fury — three tracks, one team, 90 days to first blood. Clock's running.*<br>*— Stark*</p></div>
+        </div>
+
+        <div class="hero-card" id="card-2"
+             style="--hero-color:#2980b9;--hero-glow:#3498db;--hero-bg:#0a0d1a;animation-delay:800ms">
+          <div class="hero-header">
+            <span class="hero-label">CAP</span>
+            <span class="hero-role">Strategy & Ethics</span>
+          </div>
+          <div class="hero-name">Captain America (Steve Rogers)</div>
+          <div class="hero-report"><p>**OPERATION NEW DAWN — AVENGERS PROTOCOL OMEGA**<br>*Strategic Assessment — Captain Steve Rogers*</p><p>---</p><p>**COMMAND STRUCTURE**</p><p>One Unified Coordination Cell, three parallel Crisis Commands — Climate, Pathogen, Cyber — each with a designated lead nation rotating chair, WHO/UN co-authority, and S.H.I.E.L.D. as the connective tissue. Avengers operate as a rapid-response asset *under* Crisis Command direction, not above it. Sovereign militaries retain control inside their borders; we coordinate, we don't override. Weekly joint briefings. No action crosses a national border without host-nation consent or explicit UN Security Council authorization. Authority is clear, documented, and auditable from day one.</p><p>---</p><p>**LEGAL FRAMEWORK**</p><p>We work within what exists: UN Charter Article 99 (Secretary-General emergency powers), International Health Regulations for VENOM-7, the Budapest Convention on cyber, and the Paris Agreement's emergency protocols for climate. We request an emergency UNGA resolution in 48 hours to formalize the Coordination Cell and grant limited cross-border operational authority — time-boxed to 90 days, renewable only by vote. Every action gets a legal memo. Nothing classified that touches civilian rights. If a mechanism doesn't exist, we build it through the UN — not around it.</p><p>---</p><p>**ETHICAL RED LINES**</p><p>We will not: forcibly quarantine populations without due process and a clear exit criteria. We will not deploy geoengineering interventions without affected-nation consent — desperation is not a consent form. We will not launch offensive cyber counterstrike against civilian infrastructure, even in retaliation. We will not suppress information to manage panic; people have a right to know what threatens them. These are not negotiable under pressure, under time constraint, or under orders. If any of these lines are crossed at the Council level, I step down and say so publicly. That accountability has to be real.</p><p>---</p><p>**PUBLIC TRUST**</p><p>One global message, three plain facts: what the threats are, what we are doing, and what we are *not* doing. No spin. Briefings every 48 hours through WHO, with national governments translating locally. Avengers do not speak to media unilaterally — one spokesperson per Crisis Command. We acknowledge uncertainty honestly. Trust is built by being right about what we don't know, not just what we do. Silence breeds riots. Transparency builds the cooperation we need.</p><p>---</p><p>**BURDEN-SHARING**</p><p>Cost allocation follows the polluter-pays principle for climate, proportional GDP contribution for Pathogen response, and technical-capacity matching for Cyber. Vulnerable nations get resources first, contribute what they can. A dedicated reparations track — separate from operations — addresses historical climate debt. No nation is asked to bear a burden that breaks it. That's not charity. That's how coalitions hold.</p><p>---</p><p>*We do this right, or we don't do it. The world is watching how we treat the line between necessary and acceptable. Don't let them down.*</p><p>— Rogers</p></div>
+        </div>
+
+        <div class="hero-card" id="card-3"
+             style="--hero-color:#7f8c8d;--hero-glow:#95a5a6;--hero-bg:#0a0a0a;animation-delay:1200ms">
+          <div class="hero-header">
+            <span class="hero-label">WIDOW</span>
+            <span class="hero-role">Intelligence & Recon</span>
+          </div>
+          <div class="hero-name">Black Widow (Natasha Romanoff)</div>
+          <div class="hero-report"><p>**OPERATION NEW DAWN — INTEL BRIEF**<br>*Classification: OMEGA | Romanoff, N. | 72-hr window*</p><p>---</p><p>**1. THREAT ATTRIBUTION — CYBER ACTOR**<br>*Confidence levels noted.*</p><p>- **Rogue AI Lab (HIGH confidence — 65%):** Adaptive malware above nation-state capability with no attribution fingerprint is the signature of an AI system operating beyond its handlers. Pattern matches three known labs that went dark 18 months ago — one in Belarus, one in a UAE free-trade zone, one offshore-registered. Look for anomalous energy draws and talent disappearances in those clusters.<br>- **Defector Collective (MEDIUM — 25%):** Ex-NSA, GCHQ, Unit 8200 operators with AI tooling. Motive: ideological or financial. Tell would be operational security that's *too* clean — human discipline, not machine consistency. Check dark-web contractor boards for coordinated payment pauses around the attack window.<br>- **Ex-State Operators (MEDIUM — 20%):** SVR or PLA contractors running gray-market ops. Plausible deniability is the product. But seven countries dark simultaneously exceeds their historical appetite for exposure. Doesn't fit doctrine.<br>- **Non-Human Actor (LOW — 10%):** Not dismissing it. If the malware is rewriting its own attack vectors in real time with zero human latency, the operator may be the tool.</p><p>---</p><p>**2. VECTOR INTELLIGENCE — VENOM-7**</p><p>Simultaneous three-continent emergence with R0=4.2 and unclear vectors breaks natural spillover probability to near-zero. Natural zoonotic events cluster geographically. This didn't.</p><p>Discriminating recon: genomic sequencing across all three sites for common synthetic markers; backtrack supply-chain and cold-chain logistics for shared nodes in the 30 days prior; pull flight manifests for the 72-hour pre-emergence window. Send assets to wet markets *and* BSL-adjacent facilities in all three zones. The dormant-trigger hypothesis requires a delivery mechanism — I want eyes on aerosol dispersal research tied to any of the rogue-lab footprints above.</p><p>---</p><p>**3. CONVERGENCE ANALYSIS — CUI BONO**</p><p>Single-actor hypothesis supported by: timing lock-step, capability breadth, and the beneficiary profile. Who profits from simultaneous infrastructure collapse, pandemic fear, and climate narrative acceleration? Entities positioned to sell stabilization — private emergency logistics, adaptive ag-tech patent holders, sovereign debt restructurers. Run financial forensics on any fund that shorted infrastructure and pharma simultaneously in the 60-day pre-window. Cross-reference patent filings on VENOM-class pathogen treatments filed in the last 24 months. Comms chatter: look for encrypted coordination between climate-finance NGOs and biotech dark money channels. *Confidence this is unified: MEDIUM-HIGH (60%).*</p><p>---</p><p>**4. HUMINT ASSETS — ACTIVATION PRIORITIES**</p><p>- **Geneva biotech circuit:** Asset with WHO advisory access. Tasked to extract sequencing data and identify who fast-tracked VENOM-7 sample acquisition before public announcement.<br>- **Tallinn cyber corridor:** Asset embedded in Eastern European contractor network. Tasked to surface any payment routing tied to the malware campaign's infrastructure leases.<br>- **Singapore financial node:** Asset with access to dark-pool settlement records. Tasked to flag any entity holding correlated short positions across all three crisis sectors.<br>- **Lagos and Jakarta field contacts:** Local HUMINT to confirm whether VENOM-7 emergence points show any shared logistics or foreign-national activity in the prior week.<br>- **Access point warning:** All activations must route through cut-outs. The adversary's AI capability means digital contact patterns are a liability. Dead drops and one-time voice only.</p><p>---</p><p>**5. COUNTERINTEL RISK**</p><p>This adversary almost certainly has visibility into SIGINT channels and standard Agency comms architecture — that's what "above nation-state capability" means. Assume our operation's digital footprint is compromised from the moment we use standard comms.</p><p>**What we must hide:** Asset identities, the convergence hypothesis (if they know we've connected the dots, the operation changes), and Stark's targeting parameters.</p><p>**From whom:** The cyber actor, and any state-level partner they've recruited inside allied intelligence services. FVEY channel discipline is compromised until we know the defector-collective hypothesis is dead.</p><p>**Protocol:** Compartment this brief to Fury, Rogers, and Stark only. No LMD distribution. No Helicarrier network transmission.</p><p>---</p><p>*The one piece of intel that changes everything:* A confirmed shared financial beneficiary across all three crisis vectors — one entity, one fund, one name — collapses the attribution problem and gives Rogers a rules-of-engagement target. Everything else is noise until we have that.</p><p>*— Romanoff*</p></div>
+        </div>
+</div>
+
+<!-- Nick Fury synthesis -->
+<div class="section-label">▸ director's synthesis</div>
+<div class="fury-section">
+  <div class="fury-panel">
+    <div class="fury-byline">
+      <span>NICK FURY — DIRECTOR, S.H.I.E.L.D.</span>
+      <span>WORLD SECURITY COUNCIL BRIEF</span>
+    </div>
+    <div class="fury-synthesis">
+<p># OPERATION NEW DAWN — COUNCIL BRIEFING</p><p>All four heroes reported. Synthesis complete. Full document delivered to `/mnt/session/outputs/OPERATION_NEW_DAWN_Fury_Briefing.md`. Headline below.</p><p>---</p><p>## 1. SITUATION</p><p>Three threats. One window. 72 hours to commit, 90 days to first effect, 3 years to durable fix.</p><p>The Avengers' findings reframe the mission. Banner's coupled model: the threats don't add — they multiply. Romanoff's convergence analysis: ~60% confidence one adversary is behind at least two of them; 65% confidence the cyber actor is a rogue AI lab that went dark eighteen months ago. Banner's verdict on the decision tree: **cyber is the load-bearing pin.** Climate and pathogen responses both depend on functional infrastructure. Cut the pin and best-case rises from 15% toward 60%. Leave it and worst-case rises toward 55%.</p><p>This is no longer three crises. It is one adversary operation with three faces, plus a real climate emergency it is exploiting.</p><p>## 2. WHAT EACH AVENGER DELIVERS</p><p>- **Stark — Engineering.** 200 catalytic methane-oxidation arrays + arc-reactor sea platforms; 24 containerized BSL-4 BioForge units producing 10,000 doses per 72-hour cycle; GUARDIAN — autonomous blue-team AI on quantum-hardened edge nodes. Critical risks (aerosol monsoon disruption, mobile BSL-4 breach, GUARDIAN going offensive) handled at the silicon level, not in software.<br>- **Rogers — Strategy & Ethics.** Unified Coordination Cell, three Crisis Commands under WHO/UN co-authority, Avengers under command, not above it. Emergency UNGA resolution in 48 hours, time-boxed, renewable by vote. Red lines: no forced quarantine, no geoengineering without consent, no offensive cyber on civilians, no information suppression. Polluter-pays for climate, proportional GDP for pathogen, capacity-matching for cyber.<br>- **Romanoff — Intelligence.** Cyber attribution to rogue AI lab (HIGH). VENOM-7 natural-spillover probability near-zero given simultaneity. Single-adversary convergence (MEDIUM-HIGH). HUMINT live in Geneva, Tallinn, Singapore, Lagos, Jakarta. Compartmentation order: Fury–Rogers–Stark only. No LMD, no Helicarrier network. Standard SIGINT is compromised.<br>- **Banner — Science.** MCB over Arctic shipping lanes as 90-day intervention; DAC + basalt weathering as 3-year fix. Monoclonal cocktail (60–90 day floor) parallel with mRNA vaccine (90–120 days to Phase I). 15/55/30 outcome tree, with cyber containment before day 45 as the load-bearing decision.</p><p>## 3. THE INTEGRATED PLAN</p><p>- **Phase 1 (0–72 hrs):** Rogers locks the legal frame. Romanoff compartments and activates. Stark spins production. Banner runs the model live.<br>- **Phase 2 (Days 3–45):** Cut the pin. GUARDIAN on every compromised grid. Romanoff's financial forensics surface the convergence beneficiary — one entity, one fund, one name. BioForge deployed. MCB fleet sails.<br>- **Phase 3 (Days 45–90):** VENOM-7 therapeutic authorized. Methane arrays at full scale under treaty oversight. Coordination mandate renewed on evidence.<br>- **Phase 4 (Months 3–36):** 4,000-array carbon-negative grid. 180 permanent BioForge units. 900-node GUARDIAN mesh, sovereign-operated, no shared root key.</p><p>Every Avenger's worst-case risk is covered by another Avenger's discipline. Stark's kill switches answer Banner's unknown unknowns. Rogers' consent rule answers Stark's monsoon risk. Romanoff's compartmentation answers Stark's GUARDIAN-goes-offensive risk. Banner's coupling map tells Rogers where burden-sharing must front-load. That isn't luck. That's the team.</p><p>## 4. OUTCOME</p><p>Execute: cyber neutralized inside 45 days; VENOM-7 held under 150M against the WHO 500M projection; methane cascade pulled back from self-sustaining; a standing planetary-emergency architecture that outlives this crisis.</p><p>Fail: the adversary turns three crises into a controlled collapse and sells the world its own stabilization. By day 60 the cascade is irreversible.</p><p>**Recommendation to the Council:** Authorize OMEGA execution as briefed. Compartment the convergence hypothesis. Move now.</p><p>The team is assembled. The plan holds. The clock is running.</p><p>— **Fury**</p>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  AVENGERS ASSEMBLE · HACKATHON DEMO · GENERATED 2026-06-05 13:43 UTC
+</div>
+
+<!-- Staggered card reveal driven by CSS animation-delay -->
+<script>
+  // Re-trigger animations after a short delay so the cards
+  // light up sequentially even if the page was already loaded.
+  document.querySelectorAll('.hero-card').forEach((card, i) => {
+    card.style.animationPlayState = 'paused';
+    setTimeout(() => {
+      card.style.animationPlayState = 'running';
+    }, 200 + i * 400);
+  });
+</script>
+
+</body>
+</html>

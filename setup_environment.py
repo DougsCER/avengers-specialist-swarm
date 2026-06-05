@@ -12,6 +12,10 @@ from pathlib import Path
 
 from anthropic import Anthropic
 
+# Remove any corporate proxy overrides so we hit api.anthropic.com directly.
+for _var in ("ANTHROPIC_BASE_URL", "ANTHROPIC_AUTH_TOKEN", "AZURE_OPENAI_ENDPOINT"):
+    os.environ.pop(_var, None)
+
 
 def main() -> None:
     if not os.environ.get("ANTHROPIC_API_KEY"):
